@@ -37,7 +37,10 @@ app.use("/api/blogs", blogRoutes);
 
 // Create a static folder
 const __dirname = path.resolve();
-app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+app.use("/uploads", (req, res, next) => {
+  console.log(`Serving file: ${req.url}`);
+  next();
+}, express.static(path.join(__dirname, "/uploads")));
 
 app.get("/", (req, res) => {
   res.send("API is running...");
