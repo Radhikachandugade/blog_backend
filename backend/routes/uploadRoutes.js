@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
   filename(req, file, cb) {
     cb(
       null,
-      `${file.fieldname}-${Date.now()}.${path.extname(file.originalname)}`
+      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
     );
   },
 });
@@ -24,7 +24,7 @@ function checkFileTypes(file, cb) {
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb("Only image are allowed");
+    cb(new Error("Only images are allowed"));
   }
 }
 
@@ -36,6 +36,9 @@ const upload = multer({
 });
 
 router.post("/", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
   res.send(`/${req.file.path}`);
 });
 
