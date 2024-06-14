@@ -14,33 +14,22 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(express.json()); // Parsing http request body
+app.use(express.json()); // Parsing HTTP request body
 
 const corsOptions = {
   origin: "https://blog-mastertech-psi.vercel.app",
-  credentials: true /* if you're using cookies or sessions*/,
+  credentials: true, // if you're using cookies or sessions
 };
 
 app.use(cors(corsOptions));
 
-app.options("/test-cors", cors(corsOptions), (req, res) => {
-  res.status(200).send("CORS enabled");
-});
-
-app.get("/test-cors", cors(corsOptions), (req, res) => {
-  res.status(200).send("CORS enabled");
-});
+// Static file serving
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 app.use("/api/users", userRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/blogs", blogRoutes);
-
-// Create a static folder
-const __dirname = path.resolve();
-app.use("/uploads", (req, res, next) => {
-  console.log(`Serving file: ${req.url}`);
-  next();
-}, express.static(path.join(__dirname, "/uploads")));
 
 app.get("/", (req, res) => {
   res.send("API is running...");
@@ -52,7 +41,5 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-  );
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold);
 });
